@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            overflow: hidden;
+        }
+        #main-header {
+            background-color: #bae1ff;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #bbb 1px solid;
+        }
+        #main-header h1 {
+            text-align: center;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        #todo-form {
+            background: #ffa07a;
+            padding: 30px;
+        }
+        #todo-form input[type="text"] {
+            width: 70%;
+            padding: 10px;
+        }
+        #todo-form input[type="submit"] {
+            display: inline-block;
+            width: 20%;
+            padding: 10px;
+            background: #ffffba;
+            color: #ffa07a;
+            border: none;
+            cursor: pointer;
+        }
+        #todo-form input[type="submit"]:hover {
+            background: #e95c4b;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            background: #ffa07a;
+            padding: 15px;
+            border-bottom: #bbb 1px dotted;
+        }
+        ul li a {
+            color: red;
+            float: right;
+            text-decoration: none;
+        }
+        ul li {
+            background: #ffa07a;
+            padding: 15px;
+            border-bottom: #bbb 1px dotted;
+            position: relative; /* Maintain position relative for absolute children */
+        }
+        
+        ul li form, ul li a {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        ul li a {
+            color: red;
+            text-decoration: none;
+            margin-left: 10px; /* Add some space between the text and the link */
+        }
+
+        ul li a:hover {
+            color: #000;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #6dd5ed, #2193b0); /* Gradient background */
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            overflow: hidden;
+            background:#ff8243;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adding some shadow for depth */
+            padding: 20px;
+            border-radius: 8px;
+        }
+        #main-header {
+            background-color: #bae1ff;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #bbb 1px solid;
+        }
+
+        button[type="button"] {
+            background-color: #189bcc; /* Blue color matching the gradient */
+            color: white; /* White text for better readability */
+            padding: 10px 15px; /* Padding for size */
+            border: none; /* Remove default border */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Cursor changes to indicate it's clickable */
+            margin-right: 10px; /* Spacing from other elements */
+        }
+
+        button[type="button"]:hover {
+            background-color: #a8d7ef; /* Lighter blue for hover effect */
+        }
+        
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <h1>ToDo List</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="todo-form" action="/add" method="post">
+            <input type="text" name="task" placeholder="Enter a Todo item">
+            <input type="submit" value="Add">
+        </form>
+
+        <ul id="items">
+            {% for task in todo_list %}
+                <li class="task-item">
+                    <input type="checkbox" id="task-{{ loop.index0 }}" class="task-checkbox">
+                    <span class="task-index">{{ loop.index }}. </span>
+                    <form action="/edit/{{ loop.index0 }}" method="post">
+                        <input type="text" name="new_task" value="{{ task }}" style="display: none;" class="edit-field">
+                        <span class="task-text">{{ task }}</span>
+                        <button type="button" onclick="editTask(this)">Update Task</button>
+                        <input type="submit" value="Save" style="display: none;">
+                    </form>
+                    <a href="{{ url_for('delete', task_id=loop.index0) }}" 
+                    onclick="return confirmDelete()">&#x1F5D1;</a>
+                </li>
+            {% endfor %}
+        </ul> 
+          
+    
+        <script>
+            function editTask(button) {
+                var listItem = button.parentElement;
+                var editField = listItem.querySelector('.edit-field');
+                var taskText = listItem.querySelector('.task-text');
+                var saveButton = listItem.querySelector('input[type="submit"]');
+                
+                // Toggle visibility
+                editField.style.display = 'inline-block';
+                saveButton.style.display = 'inline-block';
+                taskText.style.display = 'none';
+                button.style.display = 'none';
+                
+                // Focus on the input field and set its value to the current text
+                editField.value = taskText.textContent;
+                editField.focus();
+            }
+
+            function confirmDelete() {
+                var confirmed = confirm("Task deleted");
+                return confirmed; // will be true if OK is clicked, false otherwise
+            }
+        </script>
+    </div>
+</body>
+</html>
+
